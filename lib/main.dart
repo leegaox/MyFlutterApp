@@ -8,6 +8,7 @@ import 'GestureDetectorRoute.dart';
 import 'AnimationRoute.dart';
 import 'BigPictureRoute.dart';
 import 'CustomWidgetRoute.dart';
+
 void main() {
   runApp(new MaterialApp(
     title: 'Flutter Tutorial',
@@ -97,7 +98,7 @@ class _ScaffoldRouteState extends State<ScaffoldRoute>
         shape: CircularNotchedRectangle(), // 底部导航栏打一个圆形的洞
         child: Row(
           children: [
-            IconButton(icon: Icon(Icons.home),onPressed: (){Navigator.push(context,new MaterialPageRoute(builder: (context){return new CustomWidgetRoute()};));},),
+            IconButton(icon: Icon(Icons.home),onPressed: (){Navigator.push(context,new MaterialPageRoute(builder: (context){return new CustomWidgetRoute();}));},),
             SizedBox(), //中间位置空出
             IconButton(
                 icon: Icon(Icons.business),
