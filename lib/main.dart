@@ -5,7 +5,9 @@ import 'LayoutTestRoute.dart';
 import 'CountInheritedWidgetRoute.dart';
 import 'package:english_words/english_words.dart';
 import 'GestureDetectorRoute.dart';
-
+import 'AnimationRoute.dart';
+import 'BigPictureRoute.dart';
+import 'CustomWidgetRoute.dart';
 void main() {
   runApp(new MaterialApp(
     title: 'Flutter Tutorial',
@@ -15,7 +17,8 @@ void main() {
       "login": (context) => new LoginRoute(),
       "layout": (context) => new LayoutTestRoute(),
       "counter": (context) => new CountInheritedWidgetRoute(),
-      "gesture": (context) => new GestureDetectorRoute()
+      "gesture": (context) => new GestureDetectorRoute(),
+//      "animation": (context) => new AnimationRoute()
     },
     debugShowCheckedModeBanner: true,
 //    showPerformanceOverlay: true,
@@ -94,11 +97,14 @@ class _ScaffoldRouteState extends State<ScaffoldRoute>
         shape: CircularNotchedRectangle(), // 底部导航栏打一个圆形的洞
         child: Row(
           children: [
-            IconButton(icon: Icon(Icons.home)),
+            IconButton(icon: Icon(Icons.home),onPressed: (){Navigator.push(context,new MaterialPageRoute(builder: (context){return new CustomWidgetRoute()};));},),
             SizedBox(), //中间位置空出
             IconButton(
                 icon: Icon(Icons.business),
-                onPressed: () => {Navigator.of(context).pushNamed("gesture")}),
+                onPressed: () =>
+                {
+                Navigator.of(context).pushNamed("gesture")
+                }),
           ],
           mainAxisAlignment: MainAxisAlignment.spaceAround, //均分底部导航栏横向空间
         ),
@@ -124,7 +130,7 @@ class _ScaffoldRouteState extends State<ScaffoldRoute>
 //      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-          //悬浮按钮
+        //悬浮按钮
           child: Icon(Icons.add),
           onPressed: () {
             Navigator.of(context).pushNamed("counter");
@@ -190,8 +196,31 @@ class _InfiniteListViewState extends State<InfiniteListView> {
                   ));
             }
           }
+
           //显示单词列表项
-          return ListTile(title: Text(_words[index]));
+          return GestureDetector(
+            child: ListTile(title: Text(_words[index])),
+            onTap: () =>
+            {
+//                  Navigator.push(
+//                      context,
+//                      new MaterialPageRoute(
+//                          builder: (context) => new AnimationRoute()))
+
+            //自定义路由动画 渐隐渐入动画
+            Navigator.push(
+                context,
+                PageRouteBuilder(
+                    transitionDuration: Duration(milliseconds: 500),
+                    pageBuilder: (BuildContext ctx, Animation animation,
+                        Animation secondaryAnimation) {
+                      return new FadeTransition(
+                        opacity: animation,
+                        child: AnimationRoute(),
+                      );
+                    }))
+            },
+          );
         },
         separatorBuilder: (context, index) => Divider(height: .0),
         itemCount: _words.length);
@@ -221,7 +250,7 @@ class ListView3 extends StatelessWidget {
         ListTile(title: Text("商品列表")),
         Expanded(
             child: ListView.separated(
-                //列表项构造器
+              //列表项构造器
                 itemBuilder: (BuildContext context, int index) {
                   return ListTile(
                     title: Text("$index"),
@@ -257,7 +286,7 @@ class _InfiniteGridViewState extends State<InfiniteGridView> {
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3, //每行三列
             childAspectRatio: 1.0 //显示区域宽高相等
-            ),
+        ),
         itemCount: _icons.length,
         itemBuilder: (context, index) {
           //如果显示到最后一个并且Icon总数小于200时继续获取数据
@@ -300,7 +329,7 @@ class CustomScrollViewTestRoute extends StatelessWidget {
             flexibleSpace: FlexibleSpaceBar(
               title: const Text('Demo'),
               background: Image.asset(
-                "./images/avatar.png",
+                "assets/graphics/sea.png",
                 fit: BoxFit.cover,
               ),
             ),
@@ -317,7 +346,7 @@ class CustomScrollViewTestRoute extends StatelessWidget {
                 childAspectRatio: 4.0,
               ),
               delegate: new SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
+                    (BuildContext context, int index) {
                   //创建子widget
                   return new Container(
                     alignment: Alignment.center,
@@ -333,15 +362,15 @@ class CustomScrollViewTestRoute extends StatelessWidget {
           new SliverFixedExtentList(
             itemExtent: 50.0,
             delegate: new SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-              //创建列表项
-              return new Container(
-                alignment: Alignment.center,
-                color: Colors.lightBlue[100 * (index % 9)],
-                child: new Text('list item $index'),
-              );
-            }, childCount: 50 //50个列表项
-                ),
+                    (BuildContext context, int index) {
+                  //创建列表项
+                  return new Container(
+                    alignment: Alignment.center,
+                    color: Colors.lightBlue[100 * (index % 9)],
+                    child: new Text('list item $index'),
+                  );
+                }, childCount: 50 //50个列表项
+            ),
           ),
         ],
       ),
@@ -492,14 +521,31 @@ class MyDrawer extends StatelessWidget {
               child: Row(
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: ClipOval(
-                      child: Image.asset(
-                        'assets/graphics/cash.png',
-                        width: 80,
-                      ),
-                    ),
-                  ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: InkWell(
+                        child: Hero(
+                          tag: "head",
+                          child: ClipOval(
+                            child: Image.asset(
+                              'assets/graphics/sea.png',
+                              width: 80,
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          //打开个人中心路由
+                          Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                  pageBuilder: (BuildContext context,
+                                      Animation animation,
+                                      Animation secondaryAnimation) {
+                                    return new FadeTransition(
+                                      opacity: animation,
+                                      child:  BigPictureRoute());
+                                  }));
+                        },
+                      )),
                   Text(
                     "Wendux",
                     style: TextStyle(fontWeight: FontWeight.bold),
